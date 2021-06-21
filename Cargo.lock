@@ -981,6 +981,7 @@ dependencies = [
  "config 0.10.1",
  "deadpool-postgres",
  "dotenv",
+ "rand 0.8.3",
  "serde 1.0.126",
  "serde_json",
  "thiserror",

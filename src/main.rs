@@ -8,7 +8,7 @@ use dotenv::dotenv;
 use std::convert::Infallible;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use warp::Filter;
-use crate::models::{Config, ServerConfig, AuthorizationParams, Credentials};
+use crate::models::{ClientUserParams, Config, Credentials, OtpToken, ServerConfig};
 
 fn with_db(
     db_pool: deadpool_postgres::Pool,
@@ -30,6 +30,11 @@ async fn main() {
 
     let pool = config.pg.create_pool(NoTls).unwrap();
 
+    let client_user_params = warp::query().map(|params: ClientUserParams| {
+        println!("Mappiong params");
+        params
+    });
+
     println!(
         "Starting registration server on http://{}:{}/",
         "0.0.0.0", config.server.port
@@ -38,7 +43,6 @@ async fn main() {
     let server_base = warp::path("server")
         .and(warp::path("api"))
         .and(warp::path("v1"));
-
 
     let static_route = warp::get()
         .and(warp::path("auth"))
@@ -49,8 +53,17 @@ async fn main() {
         .and(warp::path("login"))
         .and(warp::body::json())
         .map(|credentials: Credentials| credentials)
-        .and(with_db(pool))
+        .and(with_db(pool.clone()))
         .and_then(handlers::login);
+
+    let authorize_route = warp::post()
+        .and(server_base)
+        .and(warp::path("authorize"))
+        .and(warp::body::json())
+        .map(|token: OtpToken| token)
+        .and(client_user_params)
+        .and(with_db(pool.clone()))
+        .and_then(handlers::get_authorization_code);
 
     let health_route = warp::get()
         .and(warp::path("q"))
@@ -58,7 +71,7 @@ async fn main() {
         .and(warp::path::end())
         .and_then(handlers::get_health);
 
-    let routes = static_route.or(health_route).or(login_route);
+    let routes = static_route.or(health_route).or(login_route).or(authorize_route);
 
     let addr = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), config.server.port);
     warp::serve(routes).run(addr).await;

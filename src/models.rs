@@ -9,9 +9,24 @@ pub struct Credentials {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct AuthorizationParams {
+pub struct OtpToken {
+    pub token: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct AuthorizationCode {
+    pub code: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ClientUserParams {
     pub client_id: String,
-    pub pass: String,
+    pub username: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ErrorResponse {
+    pub msg: String,
 }
 
 #[derive(Deserialize, Clone)]
