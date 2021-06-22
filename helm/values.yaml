@@ -44,7 +44,7 @@ service:
 
 pod_env:
   - name: SERVER.NAME
-    value: registration-server.nl
+    value: accounts.codebulb.nl
   - name: SERVER.HOST
     value: "0.0.0.0"
   - name: SERVER.PORT
