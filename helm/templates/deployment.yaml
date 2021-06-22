@@ -34,10 +34,22 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          {{- range .Values.pod_env}}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-          {{- end}}
+            - name: SERVER.NAME
+              value: accounts.codebulb.nl
+            - name: SERVER.HOST
+              value: "0.0.0.0"
+            - name: SERVER.PORT
+              value: "8080"
+            - name: PG.USER
+              value: postgres
+            - name: PG.PASSWORD
+              value: postgres
+            - name: PG.DBNAME
+              value: postgres
+            - name: PG.HOST
+              value: oauth2-rs-postgresql
+            - name: PG.PORT
+              value: "5432"
           ports:
             - name: http
               containerPort: 80
