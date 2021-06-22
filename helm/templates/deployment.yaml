@@ -51,7 +51,7 @@ spec:
             - name: PG.PORT
               value: "5432"
             - name: bootstrap
-              value: true
+              value: "true"
           ports:
             - name: http
               containerPort: 80
