@@ -47,7 +47,7 @@ spec:
             - name: PG.DBNAME
               value: postgres
             - name: PG.HOST
-              value: oauth2-rs-postgresql
+              value: oauth2-postgres-postgresql
             - name: PG.PORT
               value: "5432"
             - name: bootstrap
