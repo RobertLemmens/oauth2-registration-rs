@@ -47,7 +47,7 @@ spec:
             - name: PG.DBNAME
               value: postgres
             - name: PG.HOST
-              value: oauth2-postgres-postgresql
+              value: {{ .Values.cb.databaseHost }}
             - name: PG.PORT
               value: "5432"
             - name: bootstrap

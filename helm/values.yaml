@@ -13,6 +13,9 @@ image:
 imagePullSecrets: 
 - name: regcred
 
+cb:
+  databaseHost: "notes-database-postgresql"
+
 nameOverride: ""
 fullnameOverride: ""
 
