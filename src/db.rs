@@ -115,6 +115,8 @@ pub async fn generate_authorization_code(
     client: &Client,
     client_db_id: &i32,
     user_id: &i32,
+    pcke_hash: String,
+    device: String
 ) -> String {
     // Check session token eerst
 
@@ -125,12 +127,12 @@ pub async fn generate_authorization_code(
     let local: DateTime<chrono::Local> = Local::now() + token_duration;
 
     let statement = client
-        .prepare("insert into authorization_codes (client_id, user_id, code, creation_time, expire_time) values ($1, $2, $3, NOW(), $4)")
+        .prepare("insert into authorization_codes (client_id, user_id, code, creation_time, expire_time, pcke_hash, device) values ($1, $2, $3, NOW(), $4, $5, $6)")
         .await
         .unwrap();
 
     let _result = client
-        .query(&statement, &[&user_id, &client_db_id, &token, &local])
+        .query(&statement, &[&user_id, &client_db_id, &token, &local, &pcke_hash, &device])
         .await
         .expect("Error generationg authorization code");
 

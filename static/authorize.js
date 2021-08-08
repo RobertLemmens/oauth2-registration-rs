@@ -1,7 +1,7 @@
 
 function authorize() {
   const data = { token: get_parameter('otp')}
-  fetch('/server/api/v1/authorize?client_id='+get_parameter('client_id')+'&username='+get_parameter('username'), {
+  fetch('/server/api/v1/authorize?device=' + get_parameter('device') + '&pcke=' + get_parameter('pcke') + '&client_id='+get_parameter('client_id')+'&username='+get_parameter('username'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

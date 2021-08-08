@@ -1,4 +1,4 @@
-use crate::models::{AuthorizationCode, ClientUserParams, OtpToken};
+use crate::models::{AuthorizationCode, AuthorizationParams, OtpToken};
 use crate::{db, response::Response, Credentials};
 use deadpool_postgres::Client;
 use warp::{Rejection, Reply};
@@ -9,7 +9,7 @@ pub async fn get_health() -> Response {
 
 pub async fn get_authorization_code(
     token: OtpToken,
-    params: ClientUserParams,
+    params: AuthorizationParams,
     db_pool: deadpool_postgres::Pool,
 ) -> Response {
     let client: Client = db_pool.get().await.expect("Error connecting to database");
@@ -19,7 +19,7 @@ pub async fn get_authorization_code(
         let client_db_id = db::get_client_db_id(&client, params.client_id).await;
         let user_db_id = db::get_user_id(&client, params.username).await; //TODO is dit nodig? Retrieve uit token beter? exposen de username zonder reden?
         // TODO check if client id of user id == 0, dan kunnen we meteen stoppen
-        let result = db::generate_authorization_code(&client, &client_db_id, &user_db_id).await;
+        let result = db::generate_authorization_code(&client, &client_db_id, &user_db_id, params.pcke, params.device).await;
         let code = AuthorizationCode { code: result };
         let _del_result = db::delete_login_session(&client, &token).await;
         return Ok(warp::reply::json(&code));

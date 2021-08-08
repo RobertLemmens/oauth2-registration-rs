@@ -8,7 +8,7 @@ use dotenv::dotenv;
 use std::convert::Infallible;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use warp::Filter;
-use crate::models::{ClientUserParams, Config, Credentials, OtpToken, ServerConfig};
+use crate::models::{AuthorizationParams, Config, Credentials, OtpToken, ServerConfig};
 
 fn with_db(
     db_pool: deadpool_postgres::Pool,
@@ -30,7 +30,7 @@ async fn main() {
 
     let pool = config.pg.create_pool(NoTls).unwrap();
 
-    let client_user_params = warp::query().map(|params: ClientUserParams| {
+    let client_user_params = warp::query().map(|params: AuthorizationParams| {
         println!("Mappiong params");
         params
     });

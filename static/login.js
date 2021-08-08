@@ -2,7 +2,7 @@ function login() {
   var username = document.getElementById('usernameField').value
   var password = document.getElementById('passwordField').value
   // process password
-
+  //
   // Send
   const data = { user: username, pass: password }
   fetch('/server/api/v1/login', {
@@ -13,7 +13,7 @@ function login() {
     body: JSON.stringify(data),
   }).then(response => response.json())
     .then(data => {
-      window.location.href = '/auth/authorize.html?otp='+data['token']+'&client_id='+get_parameter('client_id')+'&username='+username+'&redirect_uri='+get_parameter('redirect_uri');
+      window.location.href = '/auth/authorize.html?device=' + get_parameter('device') + '&pcke=' + get_parameter('pcke') + '&otp='+data['token']+'&client_id='+get_parameter('client_id')+'&username='+username+'&redirect_uri='+get_parameter('redirect_uri');
     })
     .catch((error) => {
       console.error('Error', 'Something went wrong while logging in')

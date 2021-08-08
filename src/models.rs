@@ -19,9 +19,11 @@ pub struct AuthorizationCode {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct ClientUserParams {
+pub struct AuthorizationParams {
     pub client_id: String,
     pub username: String,
+    pub pcke: String,
+    pub device: String
 }
 
 #[derive(Deserialize, Serialize)]
