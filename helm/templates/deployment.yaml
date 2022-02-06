@@ -43,18 +43,18 @@ spec:
             - name: PG.USER
               valueFrom:
                 secretKeyRef:
-                  key: postgres-creds
-                  name: username
+                  key: username
+                  name: postgres-creds
             - name: PG.PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: postgres-creds
-                  name: password
+                  key: password
+                  name: postgres-creds
             - name: PG.DBNAME
               valueFrom:
                 secretKeyRef:
-                  key: postgres-creds
-                  name: database
+                  key: database
+                  name: postgres-creds
             - name: PG.HOST
               value: {{ .Values.cb.databaseHost }}
             - name: PG.PORT
