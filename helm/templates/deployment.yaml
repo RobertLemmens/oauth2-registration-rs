@@ -41,11 +41,20 @@ spec:
             - name: SERVER.PORT
               value: "8080"
             - name: PG.USER
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-creds
+                  name: username
             - name: PG.PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-creds
+                  name: password
             - name: PG.DBNAME
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-creds
+                  name: database
             - name: PG.HOST
               value: {{ .Values.cb.databaseHost }}
             - name: PG.PORT
