@@ -3,6 +3,8 @@ mod models;
 mod response;
 mod db;
 
+extern crate argon2;
+
 use tokio_postgres::NoTls;
 use dotenv::dotenv;
 use std::convert::Infallible;
@@ -31,7 +33,6 @@ async fn main() {
     let pool = config.pg.create_pool(NoTls).unwrap();
 
     let client_user_params = warp::query().map(|params: AuthorizationParams| {
-        println!("Mappiong params");
         params
     });
 

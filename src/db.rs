@@ -5,6 +5,7 @@ use rand::distributions::Alphanumeric;
 use rand::Rng;
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_postgres::GenericClient;
+use argon2::{self, Config};
 
 fn generate_token() -> String {
     rand::thread_rng()
@@ -19,6 +20,12 @@ pub async fn login_user(client: &Client, username: &String, password: &String) -
         .prepare("select id from users where username = $1 and password = $2")
         .await
         .unwrap();
+
+    let password_hashed = password.as_bytes();
+    let salt = b"yX2SBRQuw%*mpM";
+    let config = Config::default();
+    let hash = argon2::hash_encoded(password_hashed, salt, &config).unwrap();
+    let matches = argon2::verify_encoded(&hash, password_hashed).unwrap();
 
     let user = client
         .query(&statement, &[&username, &password])
