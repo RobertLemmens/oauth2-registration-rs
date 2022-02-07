@@ -3,6 +3,9 @@ image:
   pullPolicy: Always
   tag: "dev"
 
+cb:
+  databaseHost: "notes-database-dev-postgresql"
+
 ingress:
   enabled: true
   className: ""
