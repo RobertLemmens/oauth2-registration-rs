@@ -1,3 +1,8 @@
+image:
+  repository: registry.gitlab.com/notes26/notes-api/registration-server
+  pullPolicy: Always
+  tag: "dev"
+
 ingress:
   enabled: true
   className: ""
