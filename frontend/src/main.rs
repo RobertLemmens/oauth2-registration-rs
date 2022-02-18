@@ -1,5 +1,6 @@
 mod register;
 mod home;
+mod login;
 
 use yew::prelude::*;
 use yew::html::Scope;
@@ -7,6 +8,7 @@ use yew_router::prelude::*;
 
 use home::Home;
 use register::Register;
+use login::Login;
 
 enum Msg {
     AddOne,
@@ -82,7 +84,10 @@ pub enum Route {
     Home,
 
     #[at("/register")]
-    Register
+    Register,
+
+    #[at("/login")]
+    Login
 }
 
 fn switch(routes: &Route) -> Html {
@@ -92,6 +97,9 @@ fn switch(routes: &Route) -> Html {
         }
         Route::Register => {
             return html! { <Register /> }
+        }
+        Route::Login => {
+            return html! { <Login />}
         }
     }
 }
