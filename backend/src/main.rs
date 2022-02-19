@@ -46,7 +46,18 @@ async fn main() {
         .and(warp::path("v1"));
 
     let static_route = warp::get()
-        .and(warp::path("auth"))
+        .and(warp::fs::dir("static"));
+
+    let static_route_2 = warp::get()
+        .and(warp::path("login"))
+        .and(warp::fs::dir("static"));
+
+    let static_route_3 = warp::get()
+        .and(warp::path("register"))
+        .and(warp::fs::dir("static"));
+
+    let static_route_4 = warp::get()
+        .and(warp::path("authorize"))
         .and(warp::fs::dir("static"));
 
     let login_route = warp::post()
@@ -72,7 +83,13 @@ async fn main() {
         .and(warp::path::end())
         .and_then(handlers::get_health);
 
-    let routes = static_route.or(health_route).or(login_route).or(authorize_route);
+    let routes =
+        static_route
+            .or(static_route_2)
+            .or(static_route_3)
+            .or(static_route_4)
+            .or(health_route)
+            .or(login_route).or(authorize_route);
 
     let addr = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), config.server.port);
     warp::serve(routes).run(addr).await;
