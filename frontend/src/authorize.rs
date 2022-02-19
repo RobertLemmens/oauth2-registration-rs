@@ -5,6 +5,7 @@ use wasm_bindgen_futures::spawn_local;
 use reqwasm::http::*;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
+use web_sys::window;
 
 pub struct Authorize {
     authorization: Authorization
@@ -67,10 +68,10 @@ impl Component for Authorize {
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        let history = ctx.link().history().unwrap();
+        let location = ctx.link().location().unwrap();
         match msg {
             Msg::AuthorizeEvent => {
-                authorize_action(self.authorization.clone(),history);
+                authorize_action(self.authorization.clone(),location);
                 true
             }
         }
@@ -113,9 +114,9 @@ impl Component for Authorize {
     }
 }
 
-fn authorize_action(authorization: Authorization, history: AnyHistory) {
+fn authorize_action(authorization: Authorization, location: AnyLocation) {
     spawn_local(async move {
-        authorize(authorization, history).await;
+        authorize(authorization, location).await;
     })
 }
 
@@ -127,16 +128,24 @@ struct AuthorizeRequest {
     pcke: String
 }
 
-async fn authorize(authorization: Authorization, history: AnyHistory) {
-    let auth_request = AuthorizeRequest {
-        device: authorization.device,
-        username: authorization.username,
-        client_id: authorization.client_id,
-        pcke: authorization.pcke
+#[derive(Serialize, Deserialize)]
+struct AuthorizeResponse {
+    code: String
+}
+
+#[derive(Serialize, Deserialize)]
+struct AuthorizePayload {
+    token: String
+}
+
+async fn authorize(authorization: Authorization, location: AnyLocation) {
+    let auth_payload = AuthorizePayload {
+        token: authorization.otp
     };
-    let resp = Request::post("/server/api/v1/login")
+    let uri = format!("/server/api/v1/authorize?device={}&username={}&client_id={}&pcke={}", authorization.redirect_uri.to_owned(), authorization.username.to_owned(), authorization.client_id.to_owned(), authorization.pcke.to_owned());
+    let resp = Request::post(&uri)
         .header("Content-Type", "application/json")
-        .body(json!(auth_request).to_string())
+        .body(json!(auth_payload).to_string())
         .send()
         .await;
 
@@ -144,7 +153,17 @@ async fn authorize(authorization: Authorization, history: AnyHistory) {
         Ok(response) => {
             match response.status() {
                 200 => {
-                    log::info!("Got OK from authorize service")
+                    // We krijgen [code] terug, en moeten dan [token] opsturen. TODO fix dat..
+                    log::info!("Got OK from authorize service");
+                    match response.json::<AuthorizeResponse>().await {
+                        Ok(code) => {
+                            let uri = format!("{}?token={}", authorization.redirect_uri.to_owned(), code.code.to_owned());
+                            let win = window().unwrap();
+                            win.location().set_href(&uri);
+                            // got code back, redirect back to redirect uri with this code
+                        }
+                        Err(e) => {log::error!("Error deserializing response body {}", e)}
+                    }
                 }
                 _ => {log::info!("Non OK returned from authorize service")}
             }
