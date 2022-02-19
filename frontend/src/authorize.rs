@@ -1,9 +1,24 @@
 use yew::{Component, Context, Html, html};
+use yew_router::prelude::*;
+use crate::login::Authorization;
+use wasm_bindgen_futures::spawn_local;
+use reqwasm::http::*;
+use serde_json::json;
+use serde::{Deserialize, Serialize};
 
-pub struct Authorize;
+pub struct Authorize {
+    authorization: Authorization
+}
+
+pub enum Msg {
+    AuthorizeEvent,
+}
 
 impl Authorize {
     fn authorize_card(&self, ctx: &Context<Self>) -> Html {
+        let link = ctx.link(); 
+        let onclick = link.callback(|_| Msg::AuthorizeEvent);
+
         html! {
                <div class="box">
                 <h1 class="title is-2 note-fg-dark">{"Authorize Leafpad"}</h1>
@@ -12,7 +27,7 @@ impl Authorize {
                     <p class="subtitle is-4">{"Write notes"}</p>
                     <p class="subtitle is-4">{"Profile"}</p>
                 </div>
-                 <button class="button notes-bg-dark is-rounded is-medium"><span>{"Authorize"}</span>
+                 <button {onclick} class="button notes-bg-dark is-rounded is-medium"><span>{"Authorize"}</span>
                     <span class="icon is-small">
                        <i class="fas fa-check"></i>
                     </span>
@@ -23,15 +38,42 @@ impl Authorize {
 }
 
 impl Component for Authorize {
-    type Message = ();
+    type Message = Msg;
     type Properties = ();
 
     fn create(ctx: &Context<Self>) -> Self {
-        Self
+        let location = ctx.link().location().unwrap().query::<Authorization>();
+        let auth = match location {
+            Ok(authorization) => {
+                log::info!("Authorization {:?}", authorization);
+                authorization
+            },
+            Err(e) => {
+                log::info!("Error, missing parameters {:?}", e);
+                Authorization {
+                    username: "".to_string(),
+                    device: "".to_string(),
+                    pcke: "".to_string(),
+                    otp: "".to_string(),
+                    client_id: "".to_string(),
+                    redirect_uri: "".to_string()
+                }
+            }
+        };
+
+        Self {
+            authorization: auth
+        }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        todo!()
+        let history = ctx.link().history().unwrap();
+        match msg {
+            Msg::AuthorizeEvent => {
+                authorize_action(self.authorization.clone(),history);
+                true
+            }
+        }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
@@ -69,4 +111,47 @@ impl Component for Authorize {
             </div>
         }
     }
+}
+
+fn authorize_action(authorization: Authorization, history: AnyHistory) {
+    spawn_local(async move {
+        authorize(authorization, history).await;
+    })
+}
+
+#[derive(Serialize, Deserialize)]
+struct AuthorizeRequest {
+    device: String,
+    username: String,
+    client_id: String,
+    pcke: String
+}
+
+async fn authorize(authorization: Authorization, history: AnyHistory) {
+    let auth_request = AuthorizeRequest {
+        device: authorization.device,
+        username: authorization.username,
+        client_id: authorization.client_id,
+        pcke: authorization.pcke
+    };
+    let resp = Request::post("/server/api/v1/login")
+        .header("Content-Type", "application/json")
+        .body(json!(auth_request).to_string())
+        .send()
+        .await;
+
+    match resp {
+        Ok(response) => {
+            match response.status() {
+                200 => {
+                    log::info!("Got OK from authorize service")
+                }
+                _ => {log::info!("Non OK returned from authorize service")}
+            }
+        },
+        Err(e) => {log::info!("Error authorizing request {:?}", e)}
+    }
+    
+
+
 }

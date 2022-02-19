@@ -91,13 +91,13 @@ impl Login {
     }
 }
 
-fn login_action(username: String, password: String, history: AnyHistory) {
+fn login_action(username: String, password: String, history: AnyHistory, location: AnyLocation) {
     let user = username.clone();
     let pass = password.clone();
     log::info!("Login action!");
     log::info!("username: {}, password: {}", user, pass);
     spawn_local(async move {
-        login(user, pass, history).await;
+        login(user, pass, history, location).await;
     })
 }
 
@@ -116,7 +116,8 @@ impl Component for Login {
         match msg {
             Msg::LoginEvent => {
                 let history = ctx.link().history().unwrap();
-                login_action(self.username.clone(), self.password.clone(), history);
+                let location = ctx.link().location().unwrap();
+                login_action(self.username.clone(), self.password.clone(), history, location);
                 true
             }
             Msg::InputEvent(val, typ) => {
@@ -182,7 +183,7 @@ struct TokenResponse {
     token: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Authorization {
     pub device: String,
     pub pcke: String,
@@ -192,17 +193,38 @@ pub struct Authorization {
     pub redirect_uri: String
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LoginRequestParams {
+    pub device: String,
+    pub client_id: String,
+    pub pcke: String,
+    pub redirect_uri: String
+}
+
 impl Display for TokenResponse {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "(token:{})", self.token)
     }
 }
 
-async fn login(username: String, password: String, history: AnyHistory) {
+async fn login(username: String, password: String, history: AnyHistory, location: AnyLocation) {
     let body = format!("user: {}, pass: {}", username, password);
     let credentials = Credentials {
         user: username,
         pass: password,
+    };
+    
+    let query_params = match location.query::<LoginRequestParams>() {
+        Ok(params) => params,
+        Err(e) => {
+            log::info!("Error, no query params, cant continue");
+            LoginRequestParams {
+                device: "".to_string(),
+                client_id: "".to_string(),
+                pcke: "".to_string(),
+                redirect_uri: "".to_string()
+            }
+        }
     };
     let resp = Request::post("/server/api/v1/login")
         .header("Content-Type", "application/json")
@@ -217,12 +239,12 @@ async fn login(username: String, password: String, history: AnyHistory) {
                     Ok(js) => {
                         log::info!("{}", js);
                         let auth_params = Authorization {
-                            device: "".to_string(),
-                            pcke: "".to_string(),
+                            device: query_params.device,
+                            pcke: query_params.pcke,
                             otp: js.token,
-                            client_id: "".to_string(),
+                            client_id: query_params.client_id,
                             username: credentials.user,
-                            redirect_uri: "".to_string()
+                            redirect_uri: query_params.redirect_uri
                         };
                         history.push_with_query(Route::Authorize, auth_params);
                     }
