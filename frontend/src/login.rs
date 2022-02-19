@@ -16,7 +16,7 @@ use yew_router::hooks::use_history;
 use yew_router::prelude::*;
 
 use crate::login::InputField::{Password, Username};
-use crate::Route;
+use crate::{Authorize, Route};
 
 pub struct Login {
     username: String,
@@ -182,6 +182,16 @@ struct TokenResponse {
     token: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Authorization {
+    pub device: String,
+    pub pcke: String,
+    pub otp: String,
+    pub client_id: String,
+    pub username: String,
+    pub redirect_uri: String
+}
+
 impl Display for TokenResponse {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "(token:{})", self.token)
@@ -206,7 +216,15 @@ async fn login(username: String, password: String, history: AnyHistory) {
                 match resp.json::<TokenResponse>().await {
                     Ok(js) => {
                         log::info!("{}", js);
-                        history.push(Route::Authorize);
+                        let auth_params = Authorization {
+                            device: "".to_string(),
+                            pcke: "".to_string(),
+                            otp: js.token,
+                            client_id: "".to_string(),
+                            username: credentials.user,
+                            redirect_uri: "".to_string()
+                        };
+                        history.push_with_query(Route::Authorize, auth_params);
                     }
                     Err(e) => log::info!("Error parsing json response {:?}", e),
                 }
