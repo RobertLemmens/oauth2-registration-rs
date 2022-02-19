@@ -6,46 +6,23 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<style>
-  .login-wrapper {
-    height: 100%;
-  }
-  .is-vertical-center {
-  }
+    <style>
+        .note-bg-dark {
+            background-color: #282c34;
+        }
+        .note-fg-dark {
+            color: #282c34;
+        }
+        .login-wrapper{
+            background-image:  url("assets/test.svg");
+        }
 
-</style>
+    </style>
 
-
-<link rel="preload" href="/index-d3c2d078f89c1fe0_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
-<link rel="modulepreload" href="/index-d3c2d078f89c1fe0.js"></head>
+<link rel="preload" href="/index-1760d0d2dd7381fc_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/index-1760d0d2dd7381fc.js"></head>
 <body>
 
 
 
-<script type="module">import init from '/index-d3c2d078f89c1fe0.js';init('/index-d3c2d078f89c1fe0_bg.wasm');</script><script>(function () {
-    var url = 'ws://' + window.location.host + '/_trunk/ws';
-    var poll_interval = 5000;
-    var reload_upon_connect = () => {
-        window.setTimeout(
-            () => {
-                // when we successfully reconnect, we'll force a
-                // reload (since we presumably lost connection to
-                // trunk due to it being killed, so it will have
-                // rebuilt on restart)
-                var ws = new WebSocket(url);
-                ws.onopen = () => window.location.reload();
-                ws.onclose = reload_upon_connect;
-            },
-            poll_interval);
-    };
-
-    var ws = new WebSocket(url);
-    ws.onmessage = (ev) => {
-        const msg = JSON.parse(ev.data);
-        if (msg.reload) {
-            window.location.reload();
-        }
-    };
-    ws.onclose = reload_upon_connect;
-})()
-</script></body></html>
+<script type="module">import init from '/index-1760d0d2dd7381fc.js';init('/index-1760d0d2dd7381fc_bg.wasm');</script></body></html>

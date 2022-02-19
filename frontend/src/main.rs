@@ -1,14 +1,15 @@
 mod register;
 mod home;
 mod login;
+mod authorize;
 
 use yew::prelude::*;
-use yew::html::Scope;
 use yew_router::prelude::*;
 
 use home::Home;
 use register::Register;
 use login::Login;
+use authorize::Authorize;
 
 enum Msg {
     AddOne,
@@ -87,23 +88,30 @@ pub enum Route {
     Register,
 
     #[at("/login")]
-    Login
+    Login,
+
+    #[at("/authorize")]
+    Authorize
 }
 
 fn switch(routes: &Route) -> Html {
-    match routes.clone() {
+    return match routes.clone() {
         Route::Home => {
-            return html! { <Home /> }
+            html! { <Home /> }
         }
         Route::Register => {
-            return html! { <Register /> }
+            html! { <Register /> }
         }
         Route::Login => {
-            return html! { <Login />}
+            html! { <Login />}
+        }
+        Route::Authorize => {
+            html! { <Authorize />}
         }
     }
 }
 
 fn main() {
+    wasm_logger::init(wasm_logger::Config::default());
     yew::start_app::<App>();
 }
