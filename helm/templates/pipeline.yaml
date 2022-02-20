@@ -49,4 +49,4 @@ spec:
           workspace: source
       params:
         - name: COMPILE_FLAGS
-          value: ['-p registration-server']
+          value: ['-pregistration-server', '--release']
