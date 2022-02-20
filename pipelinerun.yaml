@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: notes-site-pipeline-run-
+spec:
+  pipelineRef:
+    name: notes-site
+  params:
+    - name: GIT_URI
+      value: 'git@github.com:RobertLemmens/registration-server.git'
+  workspaces:
+    - name: ssh-creds
+      secret:
+        secretName: ssh-keys
+    - name: dockerconfig
+      secret:
+        secretName: regcred-config-dot-json
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
