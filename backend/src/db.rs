@@ -1,4 +1,4 @@
-use crate::models::OtpToken;
+use crate::models::{OtpToken, Registration};
 use chrono::{DateTime, Duration, Local};
 use deadpool_postgres::Client;
 use rand::distributions::Alphanumeric;
@@ -55,6 +55,13 @@ pub async fn generate_login_session(client: &Client, user: &i32) -> String {
         .expect("Error executing query on sessions table");
 
     token
+}
+
+pub async fn register_user(client: &Client, registration: Registration) -> bool {
+    let statement = client.prepare("insert into users (username, password) values ($1, $2)").await.unwrap();
+    let _result = client.query(&statement, &[&registration.user, &registration.pass]).await.expect("Error registering user");
+
+    true
 }
 
 pub async fn delete_login_session(client: &Client, token: &OtpToken) {

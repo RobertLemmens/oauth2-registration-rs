@@ -10,7 +10,7 @@ use dotenv::dotenv;
 use std::convert::Infallible;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use warp::Filter;
-use crate::models::{AuthorizationParams, Config, Credentials, OtpToken, ServerConfig};
+use crate::models::{AuthorizationParams, Config, Credentials, Registration, OtpToken, ServerConfig};
 
 fn with_db(
     db_pool: deadpool_postgres::Pool,
@@ -68,6 +68,14 @@ async fn main() {
         .and(with_db(pool.clone()))
         .and_then(handlers::login);
 
+    let register_route = warp::post()
+        .and(server_base)
+        .and(warp::path("register"))
+        .and(warp::body::json())
+        .map(|registration: Registration| registration)
+        .and(with_db(pool.clone()))
+        .and_then(handlers::register);
+
     let authorize_route = warp::post()
         .and(server_base)
         .and(warp::path("authorize"))
@@ -89,7 +97,7 @@ async fn main() {
             .or(static_route_3)
             .or(static_route_4)
             .or(health_route)
-            .or(login_route).or(authorize_route);
+            .or(login_route).or(register_route).or(authorize_route);
 
     let addr = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), config.server.port);
     warp::serve(routes).run(addr).await;

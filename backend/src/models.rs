@@ -9,6 +9,13 @@ pub struct Credentials {
 }
 
 #[derive(Deserialize, Serialize)]
+pub struct Registration {
+    pub user: String,
+    pub pass: String,
+    pub email: String
+}
+
+#[derive(Deserialize, Serialize)]
 pub struct OtpToken {
     pub token: String,
 }

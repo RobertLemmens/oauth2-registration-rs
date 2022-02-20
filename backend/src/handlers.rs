@@ -1,5 +1,5 @@
-use crate::models::{AuthorizationCode, AuthorizationParams, OtpToken};
-use crate::{db, response::Response, Credentials};
+use crate::models::{AuthorizationCode, AuthorizationParams, OtpToken, Registration, Credentials};
+use crate::{db, response::Response};
 use deadpool_postgres::Client;
 use warp::{Rejection, Reply};
 
@@ -58,3 +58,13 @@ pub async fn login(
         .status(401)
         .body("Incorrect username or password".to_owned()))
 }
+
+pub async fn register(registration: Registration, db_pool: deadpool_postgres::Pool) -> std::result::Result<impl Reply, Rejection> {
+    let client: Client = db_pool.get().await.expect("Error connecting to database");
+    let success = db::register_user(&client, registration).await;
+
+    Ok(warp::http::Response::builder()
+        .status(200)
+        .body("This email adress is already taken".to_owned()))
+}
+
