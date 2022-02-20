@@ -15,20 +15,19 @@ fn generate_token() -> String {
         .collect()
 }
 
-pub async fn login_user(client: &Client, username: &String, password: &String) -> i32 {
+pub async fn login_user(client: &Client, email: &String, password: &String) -> i32 {
     let statement = client
-        .prepare("select id from users where username = $1 and password = $2")
+        .prepare("select id from users where email = $1 and password = $2")
         .await
         .unwrap();
 
-    let password_hashed = password.as_bytes();
     let salt = b"yX2SBRQuw%*mpM";
     let config = Config::default();
-    let hash = argon2::hash_encoded(password_hashed, salt, &config).unwrap();
-    let matches = argon2::verify_encoded(&hash, password_hashed).unwrap();
-
+    let hash = argon2::hash_encoded(password.as_bytes(), salt, &config).unwrap();
+    let matches = argon2::verify_encoded(&hash, password.as_bytes()).unwrap();
+    println!("Looking for {} , {}", email, hash);
     let user = client
-        .query(&statement, &[&username, &password])
+        .query(&statement, &[&email, &hash])
         .await
         .expect("Error executing query on users table");
 
@@ -58,8 +57,12 @@ pub async fn generate_login_session(client: &Client, user: &i32) -> String {
 }
 
 pub async fn register_user(client: &Client, registration: Registration) -> bool {
-    let statement = client.prepare("insert into users (username, password) values ($1, $2)").await.unwrap();
-    let _result = client.query(&statement, &[&registration.user, &registration.pass]).await.expect("Error registering user");
+    let salt = b"yX2SBRQuw%*mpM";
+    let config = Config::default();
+    let hash = argon2::hash_encoded(registration.pass.as_bytes(), salt, &config).unwrap();
+
+    let statement = client.prepare("insert into users (username, email, password) values ($1, $2, $3)").await.unwrap();
+    let _result = client.query(&statement, &[&registration.user, &registration.email, &hash]).await.expect("Error registering user");
 
     true
 }
@@ -89,7 +92,25 @@ pub async fn validate_session_token(client: &Client, token: &OtpToken) -> bool {
     return true;
 }
 
-pub async fn get_user_id(client: &Client, username: String) -> i32 {
+pub async fn get_user_id_by_email(client: &Client, email: String) -> i32 {
+    let statement = client
+        .prepare("select id from users where email = $1")
+        .await
+        .unwrap();
+
+    let user_db_id = client
+        .query(&statement, &[&email])
+        .await
+        .expect("Error getting user id");
+
+    if user_db_id.len() == 1 {
+        return user_db_id.get(0).unwrap().get(0);
+    } else {
+        return 0;
+    }
+}
+
+pub async fn get_user_id_by_username(client: &Client, username: String) -> i32 {
     let statement = client
         .prepare("select id from users where username = $1")
         .await
@@ -146,7 +167,7 @@ pub async fn generate_authorization_code(
         .unwrap();
 
     let _result = client
-        .query(&statement, &[&user_id, &client_db_id, &token, &local, &pcke_hash, &device])
+        .query(&statement, &[&client_db_id, &user_id, &token, &local, &pcke_hash, &device])
         .await
         .expect("Error generationg authorization code");
 

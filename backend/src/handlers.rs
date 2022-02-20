@@ -17,8 +17,14 @@ pub async fn get_authorization_code(
     // TODO check tijd op session token
     if db::validate_session_token(&client, &token).await {
         let client_db_id = db::get_client_db_id(&client, params.client_id).await;
-        let user_db_id = db::get_user_id(&client, params.username).await; //TODO is dit nodig? Retrieve uit token beter? exposen de username zonder reden?
+        println!("Getting id for {}", params.username);
+        let user_db_id = db::get_user_id_by_email(&client, params.username).await; //TODO is dit nodig? Retrieve uit token beter? exposen de username zonder reden?
         // TODO check if client id of user id == 0, dan kunnen we meteen stoppen
+        if (user_db_id == 0) {
+            println!("Returned ID is 0. Could not find user email");
+        } else {
+            println!("Retuend ID is {}", user_db_id);
+        }
         let result = db::generate_authorization_code(&client, &client_db_id, &user_db_id, params.pcke, params.device).await;
         let code = AuthorizationCode { code: result };
         let _del_result = db::delete_login_session(&client, &token).await;

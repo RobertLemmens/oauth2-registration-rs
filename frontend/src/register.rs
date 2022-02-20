@@ -70,6 +70,10 @@ impl Register {
             html! {
                 <div class="box">
                     <h1 class="title is-2 note-fg-dark">{"Successfully registered!"}</h1>
+                    <div class="content">
+                        <p>{"You can continue in the app."}</p>
+                        <p>{"Just tap login and use the credentials you just registered with to get started."}</p>
+                    </div>
                 </div>
             }
         } else {
@@ -146,9 +150,9 @@ impl Component for Register {
             Msg::RegisterEvent => {
                 log::info!("Registering user! {} - {}", self.name, self.email);
                 let registration = Registration {
-                    user: "".to_string(),
-                    pass: "".to_string(),
-                    email: "".to_string()
+                    user: self.name.clone(),
+                    pass: self.password.clone(),
+                    email: self.email.clone()
                 };
                 ctx.link().send_future(async move {
                     let resp = Request::post("/server/api/v1/register")
