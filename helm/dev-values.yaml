@@ -1,7 +1,7 @@
 image:
-  repository: registry.gitlab.com/notes26/notes-api/registration-server
+  repository: gcr.io/notes-c11be/registration-server
   pullPolicy: Always
-  tag: "dev"
+  tag: "0.3.0"
 
 cb:
   databaseHost: "notes-database-dev-postgresql"
