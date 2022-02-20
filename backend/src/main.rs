@@ -46,19 +46,19 @@ async fn main() {
         .and(warp::path("v1"));
 
     let static_route = warp::get()
-        .and(warp::fs::dir("../frontend/dist"));
+        .and(warp::fs::dir("static"));
 
     let static_route_2 = warp::get()
         .and(warp::path("login"))
-        .and(warp::fs::dir("../frontend/dist"));
+        .and(warp::fs::dir("static"));
 
     let static_route_3 = warp::get()
         .and(warp::path("register"))
-        .and(warp::fs::dir("../frontend/dist"));
+        .and(warp::fs::dir("static"));
 
     let static_route_4 = warp::get()
         .and(warp::path("authorize"))
-        .and(warp::fs::dir("../frontend/dist"));
+        .and(warp::fs::dir("static"));
 
     let login_route = warp::post()
         .and(server_base)

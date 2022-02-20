@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: notes-site
+  labels:
+    app.kubernetes.io/version: '0.2'
+  annotations:
+    tekton.dev/displayName: "notes site"
+    tekton.dev/pipelines.minVersion: '0.12.1'
+    tekton.dev/tags: "build, push, deploy, rust"
+spec:
+  description: >-
+    This pipeline builds the note site (container login and registration as well)
+  workspaces:
+    - name: source
+      description: The workspace that contains your cargo.toml and rust code. This will be the working directory. If this directory does not contain your source, set the context path aswell.
+    - name: ssh-creds
+      description: The directory that contains your ssh credentials.
+      optional: true
+  params:
+    - name: GIT_URI
+      type: string
+      description: The git url that contains your source code.
+    - name: CONTEXT_PATH
+      type: string
+      description: The context path for your sources
+      default: .
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+        - name: output
+          workspace: source
+        - name: ssh-directory
+          workspace: ssh-creds
+      params:
+        - name: url
+          value: '$(params.GIT_URI)'
+    - name: cargo-build
+      taskRef:
+        name: cargo
+        kind: ClusterTask
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: COMPILE_FLAGS
+          value: '-p registration-server'
