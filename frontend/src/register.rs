@@ -66,7 +66,14 @@ impl Register {
             input.map(|input| Msg::InputEvent(input.value(), RepeatPassword))
         });
 
-        html! {
+        if self.registration_success {
+            html! {
+                <div class="box">
+                    <h1 class="title is-2 note-fg-dark">{"Successfully registered!"}</h1>
+                </div>
+            }
+        } else {
+            html! {
                    <div class="box">
                     <h1 class="title is-2 note-fg-dark">{"Register"}</h1>
                      <div class="field">
@@ -107,6 +114,8 @@ impl Register {
                         </span>
                      </button>
                    </div>
+            }
+
         }
     }
 }
