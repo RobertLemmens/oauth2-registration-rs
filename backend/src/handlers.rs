@@ -1,7 +1,10 @@
+use std::convert::Infallible;
 use crate::models::{AuthorizationCode, AuthorizationParams, OtpToken, Registration, Credentials};
 use crate::{db, response::Response};
 use deadpool_postgres::Client;
-use warp::{Rejection, Reply};
+use warp::{reject, Rejection, Reply};
+use warp::http::StatusCode;
+use serde::Serialize;
 
 pub async fn get_health() -> Response {
     Ok(warp::reply::json(&"UP"))
@@ -20,7 +23,7 @@ pub async fn get_authorization_code(
         println!("Getting id for {}", params.username);
         let user_db_id = db::get_user_id_by_email(&client, params.username).await; //TODO is dit nodig? Retrieve uit token beter? exposen de username zonder reden?
         // TODO check if client id of user id == 0, dan kunnen we meteen stoppen
-        if (user_db_id == 0) {
+        if user_db_id == 0 {
             println!("Returned ID is 0. Could not find user email");
         } else {
             println!("Retuend ID is {}", user_db_id);
@@ -59,10 +62,11 @@ pub async fn login(
         };
     }
 
+    Err(reject::custom(Unauthorized))
     // because i dont get error handling in warp yet, we use response builder here.
-    Ok(warp::http::Response::builder()
-        .status(401)
-        .body("Incorrect username or password".to_owned()))
+    // Ok(warp::http::Response::builder()
+    //     .status(401)
+    //     .body("Incorrect username or password".to_owned()))
 }
 
 pub async fn register(registration: Registration, db_pool: deadpool_postgres::Pool) -> std::result::Result<impl Reply, Rejection> {
@@ -74,3 +78,41 @@ pub async fn register(registration: Registration, db_pool: deadpool_postgres::Po
         .body("This email adress is already taken".to_owned()))
 }
 
+#[derive(Debug)]
+struct Unauthorized;
+impl reject::Reject for Unauthorized {}
+/// An API error serializable to JSON.
+#[derive(Serialize)]
+struct ErrorMessage {
+    code: u16,
+    message: String,
+}
+pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
+    let code;
+    let message;
+
+    if err.is_not_found() {
+        code = StatusCode::NOT_FOUND;
+        message = "NOT_FOUND";
+    } else if let Some(Unauthorized) = err.find() {
+        code = StatusCode::UNAUTHORIZED;
+        message = "Incorrect credentials"
+    } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+        // We can handle a specific error, here METHOD_NOT_ALLOWED,
+        // and render it however we want
+        code = StatusCode::METHOD_NOT_ALLOWED;
+        message = "METHOD_NOT_ALLOWED";
+    } else {
+        // We should have expected this... Just log and say its a 500
+        eprintln!("unhandled rejection: {:?}", err);
+        code = StatusCode::INTERNAL_SERVER_ERROR;
+        message = "UNHANDLED_REJECTION";
+    }
+
+    let json = warp::reply::json(&ErrorMessage {
+        code: code.as_u16(),
+        message: message.into(),
+    });
+
+    Ok(warp::reply::with_status(json, code))
+}

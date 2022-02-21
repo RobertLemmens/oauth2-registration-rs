@@ -60,6 +60,10 @@ async fn main() {
         .and(warp::path("authorize"))
         .and(warp::fs::dir("static"));
 
+    let static_route_5 = warp::get()
+        .and(warp::path("success"))
+        .and(warp::fs::dir("static"));
+
     let login_route = warp::post()
         .and(server_base)
         .and(warp::path("login"))
@@ -96,8 +100,9 @@ async fn main() {
             .or(static_route_2)
             .or(static_route_3)
             .or(static_route_4)
+            .or(static_route_5)
             .or(health_route)
-            .or(login_route).or(register_route).or(authorize_route);
+            .or(login_route).or(register_route).or(authorize_route).recover(handlers::handle_rejection);
 
     let addr = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), config.server.port);
     warp::serve(routes).run(addr).await;

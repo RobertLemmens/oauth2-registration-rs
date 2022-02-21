@@ -2,6 +2,7 @@ mod register;
 mod home;
 mod login;
 mod authorize;
+mod success;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -10,6 +11,7 @@ use home::Home;
 use register::Register;
 use login::Login;
 use authorize::Authorize;
+use success::Success;
 
 enum Msg {
     AddOne,
@@ -91,7 +93,10 @@ pub enum Route {
     Login,
 
     #[at("/authorize")]
-    Authorize
+    Authorize,
+
+    #[at("/success")]
+    Success
 }
 
 fn switch(routes: &Route) -> Html {
@@ -107,6 +112,9 @@ fn switch(routes: &Route) -> Html {
         }
         Route::Authorize => {
             html! { <Authorize />}
+        }
+        Route::Success => {
+            html! { <Success /> }
         }
     }
 }
