@@ -16,16 +16,26 @@
         .login-wrapper{
             background-image:  url("assets/test.svg");
         }
+        .banner-wrapper {
+            background-image:  url("assets/test.svg");
+            padding-bottom: 100px;
+        }
+        .feature-wrapper {
+            background-image:  url("assets/wave-haikei.svg");
+            background-size:     cover;                      /* <------ */
+            background-repeat:   no-repeat;
+            background-position: center center;
+        }
 
     </style>
 
-<link rel="preload" href="/index-231ea77d66ece435_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
-<link rel="modulepreload" href="/index-231ea77d66ece435.js"></head>
+<link rel="preload" href="/index-cb3284b772ce4dbd_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/index-cb3284b772ce4dbd.js"></head>
 <body>
 
 
 
-<script type="module">import init from '/index-231ea77d66ece435.js';init('/index-231ea77d66ece435_bg.wasm');</script><script>(function () {
+<script type="module">import init from '/index-cb3284b772ce4dbd.js';init('/index-cb3284b772ce4dbd_bg.wasm');</script><script>(function () {
     var url = 'ws://' + window.location.host + '/_trunk/ws';
     var poll_interval = 5000;
     var reload_upon_connect = () => {

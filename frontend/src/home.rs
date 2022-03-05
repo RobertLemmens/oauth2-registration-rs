@@ -8,12 +8,12 @@ pub struct Home;
 
 impl Home {
 
-    fn card(&self, ctx: &Context<Self>, title: &str, subtitle: &str, text: &str) -> Html {
+    fn card(&self, ctx: &Context<Self>, img_src: &'static str, title: &str, subtitle: &str, text: &str) -> Html {
         html! {
                 <div class="card m-3 my-6">
                   <div class="card-image">
                     <figure class="image is-4by3">
-                      <img />
+                      <img src={img_src} />
                     </figure>
                   </div>
                   <div class="card-content">
@@ -42,10 +42,10 @@ impl Home {
                     </figure>
                     <div class="title">
                         <img />
-                        <h1>{"Simple, Fast, Perfect."}</h1>
+                        <h1>{"Markdown note taking without slowing down"}</h1>
                     </div>
                     <div class="subtitle">
-                        <p>{"Your one-stop shop for markdown note taking. Available on all major platforms and syncs to all your devices."}</p>
+                        <p>{"Your one-stop shop for markdown note taking. Fast, clean, and available on all major platforms with device cloud sync."}</p>
                     </div>
                     <div class="action-buttons">
                         <button onclick={register_callback} class="button is-primary">{"Start your free trial"}</button>
@@ -60,13 +60,13 @@ impl Home {
         html! {
                 <div class="columns is-centered">
                     <div class="column">
-                    {self.card(ctx, "Markdown", "Concise and familiar syntax. Take notes with ease", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
+                    {self.card(ctx, "assets/markdown_text3.png", "Markdown", "Concise and familiar syntax. Take notes with ease", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
                     </div>
                     <div class="column">
-                    {self.card(ctx, "Cross platform", "Mobile, desktop, it doesn't matter", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
+                    {self.card(ctx, "", "Cross platform", "Mobile, desktop, it doesn't matter", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
                     </div>
                     <div class="column">
-                    {self.card(ctx, "Cloud Sync", "Start at your desk, end on the couch. Everything is synced.", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
+                    {self.card(ctx, "", "Cloud Sync", "Start at your desk, end on the couch. Everything is synced.", "Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis consectetur purus sit amet fermentum.")}
                     </div>
                 </div>
         }
@@ -90,11 +90,15 @@ impl Component for Home {
         let link = ctx.link();
         html! {
             <>
-            <div class="container top-banner">
-                {self.banner(ctx)}
+            <div class="banner-wrapper">
+                <div class="container">
+                    {self.banner(ctx)}
+                </div>
             </div>
-            <div class="container">
-                {self.features(ctx)}
+            <div class="feature-wrapper">
+                <div class="container">
+                    {self.features(ctx)}
+                </div>
             </div>
             </>
         }
