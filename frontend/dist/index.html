@@ -18,24 +18,31 @@
         }
         .banner-wrapper {
             background-image:  url("assets/test.svg");
-            padding-bottom: 100px;
+            padding-top: 100px;
+            padding-bottom: 150px;
         }
         .feature-wrapper {
-            background-image:  url("assets/wave-haikei.svg");
+            background-image:  url("assets/layered-haikei2.svg");
             background-size:     cover;                      /* <------ */
             background-repeat:   no-repeat;
-            background-position: center center;
+            padding-top: 50px;
+        }
+        .showcase-wrapper {
+            background-image:  url("assets/wave-haikei2.svg");
+            background-size:     cover;                      /* <------ */
+            background-repeat:   no-repeat;
+            padding-top: 50px;
         }
 
     </style>
 
-<link rel="preload" href="/index-cb3284b772ce4dbd_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
-<link rel="modulepreload" href="/index-cb3284b772ce4dbd.js"></head>
+<link rel="preload" href="/index-ce2d00d13cd9212_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/index-ce2d00d13cd9212.js"></head>
 <body>
 
 
 
-<script type="module">import init from '/index-cb3284b772ce4dbd.js';init('/index-cb3284b772ce4dbd_bg.wasm');</script><script>(function () {
+<script type="module">import init from '/index-ce2d00d13cd9212.js';init('/index-ce2d00d13cd9212_bg.wasm');</script><script>(function () {
     var url = 'ws://' + window.location.host + '/_trunk/ws';
     var poll_interval = 5000;
     var reload_upon_connect = () => {
