@@ -1,7 +1,6 @@
 use yew::{Component, Context, Html};
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew::functional::*;
 
 use crate::Route;
 
