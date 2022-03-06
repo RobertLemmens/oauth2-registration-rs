@@ -1,6 +1,6 @@
 [package]
 name = "registration-server"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Robert Lemmens <rj.lemmens@pm.me>"]
 edition = "2018"
 
