@@ -30,6 +30,13 @@ impl Home {
         }
     }
 
+    fn navbar(&self, ctx: &Context<Self>) -> Html {
+        html! {
+            <nav>
+            </nav>
+        }
+    }
+
     fn banner(&self, ctx: &Context<Self>) -> Html {
         let link = ctx.link();
         let history: AnyHistory = link.history().unwrap();
@@ -40,8 +47,10 @@ impl Home {
                     <div class="columns is-centered">
                         <div class="column has-text-centered">
                             <figure class="image has-image-centered">
-                              <img style="width:400px; margin-left:auto; margin-right:auto;" src="assets/notes_logo.png"/>
+                                <img class="" style="width:1000px; margin-left:auto; margin-right:auto;" src="assets/notes-app2.png" />
                             </figure>
+
+
                             <div class="title">
                                 <img />
                                 <h1>{"Markdown note taking without slowing down"}</h1>
@@ -155,6 +164,7 @@ impl Component for Home {
         let link = ctx.link();
         html! {
             <>
+                {self.navbar(ctx)}
                 {self.banner(ctx)}
                 {self.features(ctx)}
                 {self.showcase(ctx)}
