@@ -32,7 +32,44 @@ impl Home {
 
     fn navbar(&self, ctx: &Context<Self>) -> Html {
         html! {
-            <nav>
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    <a class="navbar-item">
+                        <img src="assets/notes_logo.png" height="50"/>
+                    </a>
+                </div>
+                <div class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item">
+                            {"Home"}
+                        </a>
+
+                        <a class="navbar-item">
+                            {"Pricing"}
+                        </a>
+
+                        <a class="navbar-item">
+                            {"Documentation"}
+                        </a>
+
+                        <a class="navbar-item">
+                            {"About"}
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a class="button is-primary">
+                                    <strong>{"Sign up"}</strong>
+                                </a>
+
+                                <a class="button">
+                                    {"Log in"}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nav>
         }
     }
@@ -47,7 +84,8 @@ impl Home {
                     <div class="columns is-centered">
                         <div class="column has-text-centered">
                             <figure class="image has-image-centered">
-                                <img class="" style="width:1000px; margin-left:auto; margin-right:auto;" src="assets/notes-app2.png" />
+                                <img class="banner-image" style="width:1000px; margin-left:auto; margin-right:auto;
+            -webkit-filter: drop-shadow(5px 5px 5px #222); filter: drop-shadow(7px 7px 15px #222);" src="assets/notes-app2.png" />
                             </figure>
 
 
