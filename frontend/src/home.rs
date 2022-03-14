@@ -3,6 +3,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::Route;
+use crate::navigation::NavBar;
 
 pub struct Home;
 
@@ -30,50 +31,6 @@ impl Home {
         }
     }
 
-    fn navbar(&self, ctx: &Context<Self>) -> Html {
-        html! {
-            <nav class="navbar">
-                <div class="navbar-brand">
-                    <a class="navbar-item">
-                        <img src="assets/notes_logo.png" height="50"/>
-                    </a>
-                </div>
-                <div class="navbar-menu">
-                    <div class="navbar-start">
-                        <a class="navbar-item">
-                            {"Home"}
-                        </a>
-
-                        <a class="navbar-item">
-                            {"Pricing"}
-                        </a>
-
-                        <a class="navbar-item">
-                            {"Documentation"}
-                        </a>
-
-                        <a class="navbar-item">
-                            {"About"}
-                        </a>
-                    </div>
-                    <div class="navbar-end">
-                        <div class="navbar-item">
-                            <div class="buttons">
-                                <a class="button is-primary">
-                                    <strong>{"Sign up"}</strong>
-                                </a>
-
-                                <a class="button">
-                                    {"Log in"}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        }
-    }
-
     fn banner(&self, ctx: &Context<Self>) -> Html {
         let link = ctx.link();
         let history: AnyHistory = link.history().unwrap();
@@ -91,13 +48,13 @@ impl Home {
 
                             <div class="title">
                                 <img />
-                                <h1>{"Markdown note taking without slowing down"}</h1>
+                                <h1>{"Markdown productivity without slowing down"}</h1>
                             </div>
                             <div class="subtitle">
-                                <p>{"Your one-stop shop for markdown note taking. Fast, clean, and available on all major platforms with device cloud sync."}</p>
+                                <p>{"Notes, todo-lists, timelines and more, all in markdown. Available on all major platforms with device cloud sync."}</p>
                             </div>
                             <div class="action-buttons">
-                                <button onclick={register_callback} class="button is-primary">{"Start your free trial"}</button>
+                                <button onclick={register_callback} class="button is-primary"><strong>{"Start your free trial"}</strong></button>
                                 <button class="button">{"Documentation"}</button>
                             </div>
                         </div>
@@ -202,7 +159,7 @@ impl Component for Home {
         let link = ctx.link();
         html! {
             <>
-                {self.navbar(ctx)}
+                <NavBar />
                 {self.banner(ctx)}
                 {self.features(ctx)}
                 {self.showcase(ctx)}

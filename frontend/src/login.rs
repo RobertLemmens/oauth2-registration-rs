@@ -161,7 +161,7 @@ impl Component for Login {
                                 <img style="width:300px; margin-left:auto; margin-right:auto;" src="assets/notes_logo.png"/>
                               </figure>
                               <h1 class="title is-2 has-text-white-ter">{"Dont have an account yet?"}</h1>
-                              <button class="button is-white is-rounded is-medium">{"Create one here"}</button>
+                              <Link<Route> to={Route::Register} classes="button is-white is-rounded is-medium">{"Create one here"}</Link<Route>>
                             </div>
                           </div>
                         </div>

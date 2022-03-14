@@ -3,6 +3,8 @@ mod home;
 mod login;
 mod authorize;
 mod success;
+mod pricing;
+mod navigation;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -12,6 +14,7 @@ use register::Register;
 use login::Login;
 use authorize::Authorize;
 use success::Success;
+use pricing::Pricing;
 
 enum Msg {
     AddOne,
@@ -96,7 +99,13 @@ pub enum Route {
     Authorize,
 
     #[at("/success")]
-    Success
+    Success,
+
+    #[at("/pricing")]
+    Pricing,
+
+    #[at("/about")]
+    About
 }
 
 fn switch(routes: &Route) -> Html {
@@ -115,6 +124,12 @@ fn switch(routes: &Route) -> Html {
         }
         Route::Success => {
             html! { <Success /> }
+        }
+        Route::Pricing => {
+            html! { <Pricing /> }
+        }
+        Route::About => {
+            html! { <div> {"about page"} </div>}
         }
     }
 }
