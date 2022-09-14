@@ -21,6 +21,7 @@ use crate::{Authorize, Route};
 pub struct Login {
     username: String,
     password: String,
+    login_err: bool
 }
 
 pub enum InputField {
@@ -94,8 +95,6 @@ impl Login {
 fn login_action(username: String, password: String, history: AnyHistory, location: AnyLocation) {
     let user = username.clone();
     let pass = password.clone();
-    log::info!("Login action!");
-    log::info!("username: {}, password: {}", user, pass);
     spawn_local(async move {
         login(user, pass, history, location).await;
     })
@@ -109,6 +108,7 @@ impl Component for Login {
         Self {
             username: "".to_string(),
             password: "".to_string(),
+            login_err: false,
         }
     }
 
@@ -252,6 +252,7 @@ async fn login(username: String, password: String, history: AnyHistory, location
                 }
             }
             _ => {
+                let login_error = link.callback(|_| Msg::LoginEvent);
                 log::info!("Error...")
             }
         },

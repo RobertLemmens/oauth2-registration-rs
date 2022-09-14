@@ -54,8 +54,7 @@ impl Home {
                                 <p>{"Notes, todo-lists, timelines and more, all in markdown. Available on all major platforms with device cloud sync."}</p>
                             </div>
                             <div class="action-buttons">
-                                <button onclick={register_callback} class="button is-primary"><strong>{"Start your free trial"}</strong></button>
-                                <button class="button">{"Documentation"}</button>
+                                <button onclick={register_callback} class="button is-primary"><strong>{"Start free alpha"}</strong></button>
                             </div>
                         </div>
                     </div>
@@ -96,7 +95,7 @@ impl Home {
                         {self.card(ctx, "assets/easy.png", "Easy", "No complicated fluff.", "No complex UI elements. Search, filter, create new notes and type. It doesn't have to be complex. By keeping it simple, you can focus on writing.")}
                         </div>
                         <div class="column">
-                        {self.card(ctx, "assets/shortkeys.png", "Shortkeys", "Use keybindings to reduce downtime.", "Use shortcuts to keep your hand on the keyboard. Create new notes, notebooks, switch settings and UI modes without having to resort back to your mouse.")}
+                        {self.card(ctx, "assets/shortkeys.png", "Shortcuts", "Use keybindings to reduce downtime.", "Use shortcuts to keep your hand on the keyboard. Create new notes, notebooks, switch settings and UI modes without having to resort back to your mouse.")}
                         </div>
                     </div>
                 </div>
