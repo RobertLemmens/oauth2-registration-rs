@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/notes-c11be/registration-server
+  repository: rlemmens/registration-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.3.0"
+  tag: "0.3.2"
 
 imagePullSecrets: 
 - name: regcred
@@ -54,14 +54,14 @@ ingress:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: accounts.codebulb.nl
+    - host: oauth2-registration.example.nl
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: 
-   - secretName: accounts-codebulb-tls
+   - secretName: oauth2-registration-tls
      hosts:
-       - accounts.codebulb.nl
+       - oauth2-registration.example.nl
 
 resources:
   limits:

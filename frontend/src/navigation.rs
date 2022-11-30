@@ -17,14 +17,6 @@ pub fn navbar() -> Html {
                             {"Home"}
                         </Link<Route>>
 
-                        <Link<Route> to={Route::Pricing} classes="navbar-item">
-                            {"Pricing"}
-                        </Link<Route>>
-
-                        <a class="navbar-item">
-                            {"Documentation"}
-                        </a>
-
                         <a class="navbar-item">
                             {"About"}
                         </a>

@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: SERVER.NAME
-              value: accounts.codebulb.nl
+              value: oauth2-registration.example.nl
             - name: SERVER.HOST
               value: "0.0.0.0"
             - name: SERVER.PORT

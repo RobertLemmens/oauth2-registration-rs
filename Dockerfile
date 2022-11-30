@@ -1,4 +1,4 @@
-FROM rust:1.58 as build-env
+FROM rust:1.59 as build-env
 WORKDIR /
 ADD backend/ /backend
 ADD frontend/ /frontend
