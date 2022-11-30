@@ -252,7 +252,7 @@ async fn login(username: String, password: String, history: AnyHistory, location
                 }
             }
             _ => {
-                let login_error = link.callback(|_| Msg::LoginEvent);
+                // let login_error = link.callback(|_| Msg::LoginEvent);
                 log::info!("Error...")
             }
         },
