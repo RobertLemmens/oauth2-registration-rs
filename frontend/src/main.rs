@@ -99,9 +99,6 @@ pub enum Route {
     #[at("/success")]
     Success,
 
-    #[at("/pricing")]
-    Pricing,
-
     #[at("/about")]
     About
 }
