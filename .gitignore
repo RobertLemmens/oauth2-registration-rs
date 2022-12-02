@@ -2,4 +2,5 @@
 */target
 dist
 frontend/dist
+frontend/dist/*
 .idea/*
