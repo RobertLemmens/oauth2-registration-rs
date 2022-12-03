@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: rlemmens/registration-server
+  repository: rlemmens/oauth2-registration-rs
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.3.2"
@@ -14,7 +14,7 @@ imagePullSecrets:
 - name: regcred
 
 cb:
-  databaseHost: "notes-database-postgresql"
+  databaseHost: "oauth-database-postgresql"
 
 nameOverride: ""
 fullnameOverride: ""

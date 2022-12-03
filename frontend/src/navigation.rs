@@ -13,13 +13,6 @@ pub fn navbar() -> Html {
                 </div>
                 <div class="navbar-menu">
                     <div class="navbar-start">
-                        <Link<Route> to={Route::Home} classes="navbar-item">
-                            {"Home"}
-                        </Link<Route>>
-
-                        <a class="navbar-item">
-                            {"About"}
-                        </a>
                     </div>
                     <div class="navbar-end">
                         <div class="navbar-item">

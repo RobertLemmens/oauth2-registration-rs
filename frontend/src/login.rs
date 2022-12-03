@@ -65,7 +65,7 @@ impl Login {
 
         html! {
                    <div class="box">
-                    <h1 class="title is-2 note-fg-dark">{"Login to Leafpad"}</h1>
+                    <h1 class="title is-2 note-fg-dark">{"Login"}</h1>
                      <div class="field">
                          <div class="control has-icons-left">
                              <input onchange={oninput} class="input is-medium" placeholder="Email address" type="text" />

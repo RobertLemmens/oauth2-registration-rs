@@ -1,5 +1,4 @@
 mod register;
-mod home;
 mod login;
 mod authorize;
 mod success;
@@ -8,7 +7,6 @@ mod navigation;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use home::Home;
 use register::Register;
 use login::Login;
 use authorize::Authorize;
@@ -84,9 +82,6 @@ impl Component for App {
 
 #[derive(Routable, PartialEq, Clone, Debug)]
 pub enum Route {
-    #[at("/")]
-    Home,
-
     #[at("/register")]
     Register,
 
@@ -98,16 +93,10 @@ pub enum Route {
 
     #[at("/success")]
     Success,
-
-    #[at("/about")]
-    About
 }
 
 fn switch(routes: &Route) -> Html {
     return match routes.clone() {
-        Route::Home => {
-            html! { <Home /> }
-        }
         Route::Register => {
             html! { <Register /> }
         }
@@ -119,9 +108,6 @@ fn switch(routes: &Route) -> Html {
         }
         Route::Success => {
             html! { <Success /> }
-        }
-        Route::About => {
-            html! { <div> {"about page"} </div>}
         }
     }
 }

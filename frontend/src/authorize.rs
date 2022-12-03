@@ -22,10 +22,10 @@ impl Authorize {
 
         html! {
                <div class="box">
-                <h1 class="title is-2 note-fg-dark">{"Authorize Leafpad"}</h1>
+                <h1 class="title is-2 note-fg-dark">{"Authorize"}</h1>
                 <div class="content">
-                    <p class="subtitle is-4">{"Read notes"}</p>
-                    <p class="subtitle is-4">{"Write notes"}</p>
+                    <p class="subtitle is-4">{"Read"}</p>
+                    <p class="subtitle is-4">{"Write"}</p>
                     <p class="subtitle is-4">{"Profile"}</p>
                 </div>
                  <button {onclick} class="button notes-bg-dark is-rounded is-medium"><span>{"Authorize"}</span>

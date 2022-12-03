@@ -1,11 +1,3 @@
 #!/bin/bash
-if [[ $1 == 'dev' ]]
-then
-echo "Building dev image"
-docker build -t registry.gitlab.com/notes26/notes-api/registration-server:dev .
-docker push registry.gitlab.com/notes26/notes-api/registration-server:dev
-else
-echo "Building image"
-docker build -t registry.gitlab.com/notes26/notes-api/registration-server:0.3.1 .
-docker push registry.gitlab.com/notes26/notes-api/registration-server:0.3.1
-fi
+docker build -t rlemmens/oauth2-registration-rs:0.3.2 .
+docker push rlemmens/oauth2-registration-rs:0.3.2
