@@ -5,8 +5,15 @@ metadata:
 spec:
   template:
     spec:
+      volumes:
+        - name: postgres-ca
+          configMap:
+            name: postgres-ca
       containers:
-      - image: rlemmens/oauth2-registration-rs:0.3.2
+      - image: rlemmens/oauth2-registration-rs:0.3.3
+        volumeMounts:
+            - name: postgres-ca
+              mountPath: /app
         env:
         - name: SERVER.HOST
           value: "0.0.0.0"
@@ -14,16 +21,33 @@ spec:
           value: "8080"
         - name: SERVER.NAME
           value: "oauth2-registrationserver.nl"
+        - name: SERVER.CERT_DIR
+          value: "/app"
         - name: PG.USER
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: postgres-creds
         - name: PG.PASSWORD
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-creds
         - name: PG.HOST
-          value: "postgres"
+          valueFrom:
+            configMapKeyRef:
+              key: host
+              name: oauth2-cm
         - name: PG.PORT
-          value: "5432"
+          valueFrom:
+            configMapKeyRef:
+              key: port
+              name: oauth2-cm
         - name: PG.DBNAME
-          value: "postgres"
+          valueFrom:
+            secretKeyRef:
+              key: database
+              name: postgres-creds
         - name: PG.POOL.MAX_SIZE
           value: "30"
         - name: bootstrap

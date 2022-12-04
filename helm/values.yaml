@@ -8,7 +8,7 @@ image:
   repository: rlemmens/oauth2-registration-rs
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.3.2"
+  tag: "0.3.3"
 
 imagePullSecrets: 
 - name: regcred

@@ -6,11 +6,15 @@ mod db;
 extern crate argon2;
 
 use tokio_postgres::NoTls;
+use native_tls::{Certificate, TlsConnector};
+use postgres_native_tls::MakeTlsConnector;
 use dotenv::dotenv;
 use std::convert::Infallible;
 use std::net::{Ipv4Addr, SocketAddrV4};
+use std::{fs, io};
 use warp::Filter;
 use crate::models::{AuthorizationParams, Config, Credentials, Registration, OtpToken, ServerConfig};
+use thiserror::Error;
 
 fn with_db(
     db_pool: deadpool_postgres::Pool,
@@ -24,13 +28,41 @@ fn with_config(
     warp::any().map(move || config.server.clone())
 }
 
+#[derive(Error, Debug)]
+pub enum ConfigError {
+    #[error("could not read pem file for tls")]
+    Read(#[from] io::Error),
+    #[error("tls error")]
+    Tls(#[from] native_tls::Error),
+    #[error("unknown config error")]
+    Unknown,
+}
+
+fn setup_tls(cert_dir: String) -> Result<MakeTlsConnector, ConfigError> {
+    let cert_path = cert_dir + "/root.pem";
+    let cert = fs::read(cert_path)?;
+    let cert = Certificate::from_pem(&cert)?;
+    let connector = TlsConnector::builder()
+        .add_root_certificate(cert)
+        .build()?;
+    let connector = MakeTlsConnector::new(connector);
+    return Ok(connector);
+}
+
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
     let config: Config = crate::models::Config::from_env().unwrap();
 
-    let pool = config.pg.create_pool(NoTls).unwrap();
+    let tls = setup_tls(config.server.cert_dir.to_owned());
+    let pool = match tls {
+        Ok(res) => config.pg.create_pool(res).unwrap(),
+        Err(msg) =>  { 
+            println!("Error setting up TLS, continuing without. Message: {:?}", msg);
+            config.pg.create_pool(NoTls).unwrap() 
+        },
+    };
 
     let client_user_params = warp::query().map(|params: AuthorizationParams| {
         params

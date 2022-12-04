@@ -6,6 +6,7 @@ use rand::Rng;
 use tokio_pg_mapper::FromTokioPostgresRow;
 use tokio_postgres::GenericClient;
 use argon2::{self, Config};
+use uuid::Uuid;
 
 fn generate_token() -> String {
     rand::thread_rng()
@@ -15,7 +16,7 @@ fn generate_token() -> String {
         .collect()
 }
 
-pub async fn login_user(client: &Client, email: &String, password: &String) -> i32 {
+pub async fn login_user(client: &Client, email: &String, password: &String) -> Option<Uuid> {
     let statement = client
         .prepare("select id from users where email = $1 and password = $2")
         .await
@@ -25,20 +26,19 @@ pub async fn login_user(client: &Client, email: &String, password: &String) -> i
     let config = Config::default();
     let hash = argon2::hash_encoded(password.as_bytes(), salt, &config).unwrap();
     let matches = argon2::verify_encoded(&hash, password.as_bytes()).unwrap();
-    println!("Looking for {} , {}", email, hash);
     let user = client
         .query(&statement, &[&email, &hash])
         .await
         .expect("Error executing query on users table");
 
     if user.len() == 1 {
-        return user.get(0).unwrap().get(0);
+        return Some(user.get(0).unwrap().get(0));
     } else {
-        return 0;
+        return None;
     }
 }
 
-pub async fn generate_login_session(client: &Client, user: &i32) -> String {
+pub async fn generate_login_session(client: &Client, user: &Uuid) -> String {
     let token = generate_token();
     let statement = client
         .prepare("insert into login_sessions(session_token, user_id, creation_time, expire_time) values ($1, $2, NOW(), $3)")
@@ -92,7 +92,7 @@ pub async fn validate_session_token(client: &Client, token: &OtpToken) -> bool {
     return true;
 }
 
-pub async fn get_user_id_by_email(client: &Client, email: String) -> i32 {
+pub async fn get_user_id_by_email(client: &Client, email: String) -> Option<Uuid> {
     let statement = client
         .prepare("select id from users where email = $1")
         .await
@@ -104,13 +104,13 @@ pub async fn get_user_id_by_email(client: &Client, email: String) -> i32 {
         .expect("Error getting user id");
 
     if user_db_id.len() == 1 {
-        return user_db_id.get(0).unwrap().get(0);
+        return Some(user_db_id.get(0).unwrap().get(0));
     } else {
-        return 0;
+        return None;
     }
 }
 
-pub async fn get_user_id_by_username(client: &Client, username: String) -> i32 {
+pub async fn get_user_id_by_username(client: &Client, username: String) -> Option<Uuid> {
     let statement = client
         .prepare("select id from users where username = $1")
         .await
@@ -122,13 +122,13 @@ pub async fn get_user_id_by_username(client: &Client, username: String) -> i32 {
         .expect("Error getting user id");
 
     if user_db_id.len() == 1 {
-        return user_db_id.get(0).unwrap().get(0);
+        return Some(user_db_id.get(0).unwrap().get(0));
     } else {
-        return 0;
+        return None;
     }
 }
 
-pub async fn get_client_db_id(client: &Client, client_id: String) -> i32 {
+pub async fn get_client_db_id(client: &Client, client_id: String) -> Option<Uuid> {
     let statement = client
         .prepare("select id from clients where client_id = $1")
         .await
@@ -140,16 +140,16 @@ pub async fn get_client_db_id(client: &Client, client_id: String) -> i32 {
         .expect("Error getting client id");
 
     if client_db_id.len() == 1 {
-        return client_db_id.get(0).unwrap().get(0);
+        return Some(client_db_id.get(0).unwrap().get(0));
     } else {
-        return 0;
+        return None;
     }
 }
 
 pub async fn generate_authorization_code(
     client: &Client,
-    client_db_id: &i32,
-    user_id: &i32,
+    client_db_id: &Uuid,
+    user_id: &Uuid,
     pcke_hash: String,
     device: String
 ) -> String {
